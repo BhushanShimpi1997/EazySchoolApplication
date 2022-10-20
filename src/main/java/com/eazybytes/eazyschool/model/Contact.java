@@ -1,5 +1,7 @@
 package com.eazybytes.eazyschool.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -25,6 +27,7 @@ public class Contact extends BaseEntity{
     @Column(name = "contact_id")
     private int contactId;
 
+  //  @JsonProperty("person_name")
     @NotBlank(message = "Name must not be blank")
     @Size(min = 3,message = "Name must contains atleast 3 char")
     private String name;

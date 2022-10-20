@@ -4,19 +4,17 @@ import com.eazybytes.eazyschool.model.Contact;
 import com.eazybytes.eazyschool.service.ContactService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
+import org.springframework.data.domain.Page;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.logging.Logger;
+
 
 
 @Controller
@@ -63,12 +61,22 @@ public class ContactController {
         return "redirect:/contact";
     }
 
-    @RequestMapping(value = "/displayMessages", method = RequestMethod.GET)
-    public ModelAndView displayMessages(Model model) {
-        List<Contact> contactMsgs = contactService.findMsgsWithOpenStatus();
+    @RequestMapping(value = "/displayMessages/page/{pageNum}", method = RequestMethod.GET)
+    public ModelAndView displayMessages(Model model, @PathVariable("pageNum")int pageNum,
+                                        @RequestParam(value = "sortField")String sortField,
+                                        @RequestParam(value = "sortDir")String sortDir)
+    {
+        Page<Contact> msgPage = contactService.findMsgsWithOpenStatus(pageNum,sortField,sortDir);
+        List<Contact>contactMsgs=msgPage.getContent();
         ModelAndView md = new ModelAndView();
+        md.addObject("currentPage",pageNum);
+        md.addObject("totalPages",msgPage.getTotalPages());
+        md.addObject("totalMsgs",msgPage.getTotalElements());
+        md.addObject("sortField",sortField);
+        md.addObject("sortDir",sortDir);
+        md.addObject("reverseSortDir",sortDir.equals("asc")?"desc":"asc");
+        md.addObject("contactMsgs",contactMsgs);
         md.setViewName("messages.html");
-        md.addObject("contactMsgs", contactMsgs);
         return md;
 
     }

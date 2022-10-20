@@ -1,5 +1,6 @@
 package com.eazybytes.eazyschool.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,18 +17,23 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
+
+    @JsonIgnore
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
+    @JsonIgnore
     @CreatedBy
     @Column(updatable = false)
     private String createdBy;
 
+    @JsonIgnore
     @LastModifiedDate
     @Column(insertable = false)
     private LocalDateTime updatedAt;
 
+    @JsonIgnore
     @LastModifiedBy
     @Column(insertable = false)
     private String updatedBy;
